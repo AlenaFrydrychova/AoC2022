@@ -31,13 +31,13 @@ namespace AdventOfCode2022
                     var leftTrees = line.Substring(0, treePosition);
                     var maxLeft = ConvertToInts(leftTrees).Max();
 
-                    var rightTrees = line.Substring(treePosition);
+                    var rightTrees = line.Substring(treePosition + 1);
                     var maxRight = ConvertToInts(rightTrees).Max();
 
                     var currentColumn = GetColumn(treePosition, lines);
                     var maxUp = currentColumn.GetRange(0, lineNumber).Max();
-                    var maxDown = currentColumn.GetRange(lineNumber, forestLenght - lineNumber).Max();
-
+                    var down = currentColumn.GetRange(lineNumber + 1, forestLenght - lineNumber - 1);
+                    var maxDown = down.Max();
                     if (treeInt > maxLeft || treeInt > maxRight || treeInt > maxUp || treeInt > maxDown)
                     {
                         visibleTrees++;
