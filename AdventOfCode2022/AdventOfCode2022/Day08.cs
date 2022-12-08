@@ -14,6 +14,8 @@ namespace AdventOfCode2022
 
             var visibleTrees = 0;
 
+            var highestScenicScore = 0;
+
             foreach (var line in lines)
             {
                 var lineNumber = lines.IndexOf(line);
@@ -29,15 +31,29 @@ namespace AdventOfCode2022
                     }
 
                     var leftTrees = line.Substring(0, treePosition);
-                    var maxLeft = ConvertToInts(leftTrees).Max();
+                    var intLeft = ConvertToInts(leftTrees);
+                    var maxLeft = intLeft.Max();
+                    intLeft.Reverse();
+                    var leftScore = GetScenicScore(intLeft, treeInt);
 
                     var rightTrees = line.Substring(treePosition + 1);
-                    var maxRight = ConvertToInts(rightTrees).Max();
+                    var intRight = ConvertToInts(rightTrees);
+                    var maxRight = intRight.Max();
+                    var rightScore = GetScenicScore(intRight, treeInt);
 
                     var currentColumn = GetColumn(treePosition, lines);
-                    var maxUp = currentColumn.GetRange(0, lineNumber).Max();
+                    var up = currentColumn.GetRange(0, lineNumber);
+                    var maxUp = up.Max();
+                    up.Reverse();
+                    var upScore = GetScenicScore(up, treeInt);
+
                     var down = currentColumn.GetRange(lineNumber + 1, forestLenght - lineNumber - 1);
                     var maxDown = down.Max();
+                    var downScore = GetScenicScore(down, treeInt);
+
+                    var totalScore = CountScenicScore(upScore, downScore, leftScore, rightScore);
+                    highestScenicScore = totalScore > highestScenicScore ? totalScore : highestScenicScore;
+
                     if (treeInt > maxLeft || treeInt > maxRight || treeInt > maxUp || treeInt > maxDown)
                     {
                         visibleTrees++;
@@ -47,6 +63,7 @@ namespace AdventOfCode2022
                 }
             }
             Console.WriteLine(visibleTrees);
+            Console.WriteLine(highestScenicScore);
         }
 
         private List<int> ConvertToInts(string leftTrees)
@@ -68,6 +85,33 @@ namespace AdventOfCode2022
             }
 
             return column;
+        }
+
+        private int GetScenicScore(List<int> trees, int currentTree)
+        {
+            var score = 0;
+            foreach (var tree in trees)
+            {
+                if (tree < currentTree)
+                {
+                    score++;
+                }
+                else if (tree == currentTree)
+                {
+                    score++;
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return score;
+        }
+
+        private int CountScenicScore(int upScore, int downScore, int leftScore, int rightScore)
+        {
+            return upScore * downScore * leftScore * rightScore;
         }
     }
 }
